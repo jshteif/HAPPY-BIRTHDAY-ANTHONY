@@ -177,19 +177,19 @@
     <div class="body">
       <div id="challenge">
         <h1>// FINAL FLAG</h1>
-        <div class="subtitle">5 images. 5 characters. 1 answer.</div>
+        <div class="subtitle">find 5 flags from 5 images then type ur answers here!</div>
 
         <div class="intro">
           <div class="label">// brief</div>
-          you've recovered 5 fragments hidden in image metadata. enter each character below, in order, to unlock the final payload.
+          i was crafting an ig post for ur bday with rly cute captions for each pic but the captions got lost in the sauce :( help me find them
         </div>
 
         <div class="inputs">
-          <div class="field"><label>img_01</label><input type="text" maxlength="1" data-i="0" autocomplete="off"></div>
-          <div class="field"><label>img_02</label><input type="text" maxlength="1" data-i="1" autocomplete="off"></div>
-          <div class="field"><label>img_03</label><input type="text" maxlength="1" data-i="2" autocomplete="off"></div>
-          <div class="field"><label>img_04</label><input type="text" maxlength="1" data-i="3" autocomplete="off"></div>
-          <div class="field"><label>img_05</label><input type="text" maxlength="1" data-i="4" autocomplete="off"></div>
+          <div class="field"><label>image_1</label><input type="text" maxlength="1" data-i="0" autocomplete="off"></div>
+          <div class="field"><label>image_2</label><input type="text" maxlength="1" data-i="1" autocomplete="off"></div>
+          <div class="field"><label>image_3</label><input type="text" maxlength="1" data-i="2" autocomplete="off"></div>
+          <div class="field"><label>image_4</label><input type="text" maxlength="1" data-i="3" autocomplete="off"></div>
+          <div class="field"><label>image_5</label><input type="text" maxlength="1" data-i="4" autocomplete="off"></div>
         </div>
 
         <div class="controls">
@@ -200,7 +200,7 @@
 
         <div class="hint" id="hint">
           <div class="h-title">// hint</div>
-          each image hides exactly one character. run <code style="color:#ff8a00">exiftool image.jpg</code> and look for fields with unusual values: ImageDescription, UserComment, Artist, Copyright, Comment. one letter per image, in numerical order.
+          u might needa run <code style="color:#ff8a00">exiftool image_x.jpg</code> and look for some interesting fields and values. input them in numerical order (leave out the flag{} part).
         </div>
       </div>
 
@@ -209,26 +209,25 @@
         <div class="subtitle">authentication complete. payload unlocked.</div>
 
         <div class="flag-line">
-          anthony{AVOCADO_FOREVER}
+          anthony{BIRTHDAY_BOY}
         </div>
 
         <div class="message">
-          hey you. you did it. of course you did — i never had any doubt.
+          YAAAAYYYAYAYAYYAYAY i hope u enjoyed!!
           <br><br>
-          everything up to this point was just the wrapper. the actual gift is waiting for you. you've earned it.
+          time to relax and enjoy ur bday. i love u my anthony! :D
         </div>
 
         <div class="next">
           <div class="label">// final stage</div>
-          [REPLACE THIS WITH WHERE THE REAL GIFT IS. e.g. "check under your pillow" / "open the box on your nightstand" / "the cake is in the fridge — come find me"]
+          come with me to my car i got u a little somethin somethin
         </div>
       </div>
     </div>
   </div>
 
 <script>
-  // CHANGE THESE 5 CHARACTERS TO YOUR ACTUAL ANSWER
-  const ANSWER = ['A', 'V', 'O', 'C', 'A']; // example: spells "AVOCA" — replace with your real 5 chars
+  const ANSWER = ['barn_dog', 'baby_turtle', 'marg_menace', 'anthony_hacker', 'lovely_lover'];
 
   const inputs = document.querySelectorAll('.field input');
   const submitBtn = document.getElementById('submit');
