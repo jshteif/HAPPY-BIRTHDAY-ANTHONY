@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>anthonyCTF // final flag</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #0a0a0a;
+    color: #e0e0e0;
+    font-family: 'SF Mono', 'Monaco', 'Menlo', 'Courier New', monospace;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    line-height: 1.5;
+  }
+  .terminal {
+    width: 100%;
+    max-width: 640px;
+    background: #111;
+    border: 1px solid #2a2a2a;
+    border-radius: 6px;
+    box-shadow: 0 0 40px rgba(255, 138, 0, 0.08);
+    overflow: hidden;
+  }
+  .titlebar {
+    background: #1a1a1a;
+    padding: 10px 14px;
+    border-bottom: 1px solid #2a2a2a;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: #888;
+  }
+  .dot { width: 12px; height: 12px; border-radius: 50%; background: #333; }
+  .dot.r { background: #ff5f56; }
+  .dot.y { background: #ffbd2e; }
+  .dot.g { background: #27c93f; }
+  .titlebar .path { margin-left: 12px; }
+  .body { padding: 28px 26px; }
+  .prompt { color: #ff8a00; font-weight: 600; }
+  h1 {
+    font-size: 18px;
+    margin-bottom: 6px;
+    color: #ff8a00;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  .subtitle { color: #888; font-size: 13px; margin-bottom: 22px; }
+  .intro {
+    background: #0a0a0a;
+    border-left: 2px solid #ff8a00;
+    padding: 12px 14px;
+    margin-bottom: 24px;
+    font-size: 14px;
+    color: #c0c0c0;
+  }
+  .intro .label { color: #ff8a00; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+  .inputs-vert {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+  .field-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .field-row label {
+    font-size: 11px;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    min-width: 70px;
+  }
+  .field-row input {
+    flex: 1;
+    height: 44px;
+    background: #0a0a0a;
+    border: 1px solid #333;
+    color: #ff8a00;
+    font-family: inherit;
+    font-size: 15px;
+    border-radius: 4px;
+    padding: 0 14px;
+    transition: all 0.15s ease;
+    caret-color: #ff8a00;
+  }
+  .field-row input::placeholder { color: #444; }
+  .field-row input:focus {
+    outline: none;
+    border-color: #ff8a00;
+    box-shadow: 0 0 0 3px rgba(255, 138, 0, 0.15);
+  }
+  .field-row input.ok { border-color: #27c93f; color: #27c93f; }
+  .field-row input.bad { border-color: #ff5f56; color: #ff5f56; animation: shake 0.3s ease; }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-4px); }
+    75% { transform: translateX(4px); }
+  }
+  .controls { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  button {
+    background: #ff8a00;
+    color: #0a0a0a;
+    border: none;
+    padding: 11px 22px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  button:hover { background: #ffa030; transform: translateY(-1px); }
+  button:active { transform: translateY(0); }
+  button.ghost { background: transparent; color: #888; border: 1px solid #333; }
+  button.ghost:hover { background: #1a1a1a; color: #e0e0e0; transform: none; }
+  .status { font-size: 12px; color: #888; margin-left: auto; }
+  .status.bad { color: #ff5f56; }
+  .hint {
+    margin-top: 18px;
+    padding: 12px 14px;
+    background: #0a0a0a;
+    border: 1px dashed #333;
+    border-radius: 4px;
+    font-size: 12px;
+    color: #999;
+    display: none;
+  }
+  .hint.show { display: block; }
+  .hint .h-title { color: #ffbd2e; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+  /* success screen */
+  .success { display: none; }
+  .success.show { display: block; animation: fadeIn 0.6s ease; }
+  .success h2 { color: #27c93f; font-size: 20px; margin-bottom: 8px; }
+  .success .flag-line {
+    background: #0a0a0a;
+    border: 1px solid #27c93f;
+    padding: 14px;
+    margin: 18px 0;
+    border-radius: 4px;
+    color: #27c93f;
+    font-size: 16px;
+    text-align: center;
+    letter-spacing: 1px;
+  }
+  .success .message {
+    color: #d0d0d0;
+    font-size: 14px;
+    margin: 18px 0;
+    line-height: 1.7;
+  }
+  .success .next {
+    background: #0a0a0a;
+    border-left: 2px solid #27c93f;
+    padding: 14px;
+    margin-top: 18px;
+    font-size: 14px;
+    color: #c0c0c0;
+  }
+  .success .next .label { color: #27c93f; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  @media (max-width: 480px) {
+    .body { padding: 22px 18px; }
+    .field-row label { min-width: 60px; font-size: 10px; }
+    .field-row input { font-size: 14px; }
+  }
+</style>
+</head>
+<body>
+  <div class="terminal">
+    <div class="titlebar">
+      <div class="dot r"></div>
+      <div class="dot y"></div>
+      <div class="dot g"></div>
+      <span class="path">anthonyCTF — final_flag.exe</span>
+    </div>
+    <div class="body">
+      <div id="challenge">
+        <h1>// FINAL FLAG</h1>
+        <div class="subtitle">find 5 flags from 5 images then type ur answers here!</div>
+
+        <div class="intro">
+          <div class="label">// brief</div>
+          i was crafting an ig post for ur bday with rly cute captions for each pic but the captions got lost in the sauce :( help me find them
+        </div>
+
+        <div class="inputs-vert">
+          <div class="field-row"><label>image_1</label><input type="text" data-i="0" autocomplete="off" placeholder="enter phrase"></div>
+          <div class="field-row"><label>image_2</label><input type="text" data-i="1" autocomplete="off" placeholder="enter phrase"></div>
+          <div class="field-row"><label>image_3</label><input type="text" data-i="2" autocomplete="off" placeholder="enter phrase"></div>
+          <div class="field-row"><label>image_4</label><input type="text" data-i="3" autocomplete="off" placeholder="enter phrase"></div>
+          <div class="field-row"><label>image_5</label><input type="text" data-i="4" autocomplete="off" placeholder="enter phrase"></div>
+        </div>
+
+        <div class="controls">
+          <button id="submit"><span class="prompt">$</span> submit_flag</button>
+          <button id="hint-btn" class="ghost">need a hint?</button>
+          <div class="status" id="status">awaiting input</div>
+        </div>
+
+        <div class="hint" id="hint">
+          <div class="h-title">// hint</div>
+          u might needa run <code style="color:#ff8a00">exiftool image_x.jpg</code> and look for some interesting fields and values. input them in numerical order (leave out the flag{} part).
+        </div>
+      </div>
+
+      <div class="success" id="success">
+        <h2>✓ FLAG ACCEPTED</h2>
+        <div class="subtitle">authentication complete. payload unlocked.</div>
+
+        <div class="flag-line">
+          anthony{BIRTHDAY_BOY}
+        </div>
+
+        <div class="message">
+          YAAAAYYYAYAYAYYAYAY i hope u enjoyed!!
+          <br><br>
+          time to relax and enjoy ur bday. i love u my anthony! :D
+        </div>
+
+        <div class="next">
+          <div class="label">// final stage</div>
+          come with me to my car i got u a little somethin somethin
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  const ANSWER = ['barn_dog', 'baby_turtle', 'marg_menace', 'anthony_hacker', 'lovely_lover'];
+
+  const inputs = document.querySelectorAll('.field-row input');
+  const submitBtn = document.getElementById('submit');
+  const hintBtn = document.getElementById('hint-btn');
+  const hint = document.getElementById('hint');
+  const status = document.getElementById('status');
+  const challenge = document.getElementById('challenge');
+  const success = document.getElementById('success');
+
+  let attempts = 0;
+
+  inputs.forEach((input) => {
+    input.addEventListener('input', (e) => {
+      e.target.classList.remove('bad', 'ok');
+    });
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') submitBtn.click();
+    });
+  });
+
+  submitBtn.addEventListener('click', () => {
+    attempts++;
+    const entered = Array.from(inputs).map(i => i.value.trim().toLowerCase());
+    const correct = entered.every((c, i) => c === ANSWER[i]);
+
+    if (correct) {
+      inputs.forEach(i => { i.classList.remove('bad'); i.classList.add('ok'); });
+      status.textContent = 'access granted';
+      status.classList.remove('bad');
+      setTimeout(() => {
+        challenge.style.display = 'none';
+        success.classList.add('show');
+      }, 600);
+    } else {
+      inputs.forEach((input, idx) => {
+        input.classList.remove('ok', 'bad');
+        if (input.value.trim().toLowerCase() === ANSWER[idx]) {
+          input.classList.add('ok');
+        } else {
+          input.classList.add('bad');
+        }
+      });
+      status.textContent = `access denied — attempt ${attempts}`;
+      status.classList.add('bad');
+      if (attempts >= 3) {
+        hint.classList.add('show');
+      }
+    }
+  });
+
+  hintBtn.addEventListener('click', () => {
+    hint.classList.toggle('show');
+  });
+
+  inputs[0].focus();
+</script>
+</body>
+</html>
